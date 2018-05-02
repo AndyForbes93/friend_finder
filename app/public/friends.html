@@ -49,16 +49,9 @@
                                 <input type="file" class="form-control-file" id="imageInput" aria-describedby="fileHelp">
                             </div>
                             <!--Need to loop over questions to get them to display-->
-                            <div class="form-group">
-                                <label for="exampleSelect1">Example select</label>
-                                <select class="form-control" id="question1">
-                                    <option>1</option>
-                                    <option>2</option>
-                                    <option>3</option>
-                                    <option>4</option>
-                                    <option>5</option>
-                                </select>
+                            <div class="question-form">
                             </div>
+
                             <button type="submit" class="btn btn-primary submit">Submit</button>
                         </form>
                     </div>
@@ -69,7 +62,7 @@
             <div class="container">
                 <p>
                     <a href="/api/friends">API Link</a> |
-                    <a href="#">GitHub Repo</a>
+                    <a href="https://github.com/AndyForbes93/friend_finder" target=_blank>GitHub Repo</a>
                 </p>
             </div>
         </footer>
@@ -80,13 +73,48 @@
 </html>
 
 <script type="text/javascript">
+    var questions = ["I am always perpared and follow a schedule", "I do not have a active imagination",
+        "I feel comfortable talking to large crowds and meeting new people",
+        "I am interested in helping people's problems", "I get irritated and stressed easily",
+        "I enjoy using difficult words", "I never leave my belongs laying around",
+        "I like drawing attention to myself", "I make people feel at ease",
+        "I am much more anxious than most people"
+    ];
+
+    for (i = 0; i < questions.length; i++) {
+        var questionForm = (
+            `<div class="form-group">
+                <label for="question${i}" id="questionAsk${i}">${questions[i]}</label>
+                <select class="form-control" id="questionAnswer${i}">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                </select>
+            </div>`
+        );
+        $(".question-form").append(questionForm);
+    }
+
+
+
     $(".submit").on("click", function (event) {
         event.preventDefault();
         // Here we grab the form elements
         var newFriend = {
             friendName: $("#friendName").val().trim(),
             friendImage: $("#imageInput").val().trim(),
-            questionVal: $("#question1").val().trim(),
+            scores: [$("#questionAnswer0").val(), 
+                    $("#questionAnswer1").val(),
+                    $("#questionAnswer2").val(),
+                    $("#questionAnswer3").val(),
+                    $("#questionAnswer4").val(),
+                    $("#questionAnswer5").val(),
+                    $("#questionAnswer6").val(),
+                    $("#questionAnswer7").val(),
+                    $("#questionAnswer8").val(),
+                    $("#questionAnswer9").val()]
         };
 
         console.log(newFriend);
@@ -95,15 +123,14 @@
             function (data) {
 
                 if (data) {
+                    //this will be a modal that display the person you match closest with
                     alert("The Results are in!");
-                }
-
-                else {
+                } else {
                     alert("error");
                 }
-                $("#sfriendName").val("");
-                $("#imageInput").val("");
-                $("#question1").val("");
+                // $("#sfriendName").val("");
+                // $("#imageInput").val("");
+                // $("#questionAnswer1").val("");
             });
 
     });
