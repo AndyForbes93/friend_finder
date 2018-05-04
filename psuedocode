@@ -2,13 +2,23 @@ BASIC SETUP DONE CAN INPUT INFO INTO FORMS AND HAVE IT SHOW UP IN SERVER
 
 
 NEED TO:
-Build script to loop and show all questions along with proper id to them
+Build script to loop and show all questions along with proper id to them   
+***v/ v/ v/
 
-get values from all questions nto array to post to SERVER
+get values from all questions nto array to post to SERVER 
+***v/ v/ v/
+
+
+
 
 build calculating script that will match similar users together
 
-make module that will give friend closests matched
+*HOW TO CALC* 
+total up score and compare range 
+***v/v/v/
+
+make modal that will give friend closests matched
+NEED TO DO TONIGHT!!
 
 
 debug the bullshit

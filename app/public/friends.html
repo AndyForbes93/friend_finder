@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <!-- <script src="../data/logic.js"></script>>-->
 
 </head>
 
@@ -18,14 +19,15 @@
 
         <div class="jumbotron">
             <h1 class="text-center">
-                <span class="fa fa-fire"></span> Friend Finder </h1>
+                <span class="fa fa-address-card"></span> Friend Finder </h1>
             <hr>
             <h4 class="text-center">Answer the questions below as honest as possible</h4>
+            <p class="text-center">On a scale of 1 (Strongly Disagree) to 5 (Strongly Agree).</p>
             <br>
 
             <div class="text-center">
                 <a href="/">
-                    <button class="btn btn-lg btn-default">
+                    <button class="btn btn-lg btn-danger">
                         <span class="fa fa-home"> </span> HOME
                     </button>
                 </a>
@@ -38,6 +40,25 @@
                     <div class="panel-heading">
                         <h4 class="panel-title">Friend Finder Quiz</h4>
                     </div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">We FoundYour New Best Friend</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <image id="friend_image" src=# width=80%></image>
+                                    <h6 id="friend_name"></h6>
+                                    <p id="description"></p><hr>
+                                    <p id="emailDisplay"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="panel-body">
                         <form role="form">
                             <div class="form-group">
@@ -45,14 +66,19 @@
                                 <input type="name" class="form-control" id="friendName" placeholder="Enter Your Name">
                             </div>
                             <div class="form-group">
-                                <label for="imageInput">Upload an Image</label>
-                                <input type="file" class="form-control-file" id="imageInput" aria-describedby="fileHelp">
+                                <label for="imageInput">Upload an Image URL</label>
+                                <input type="text" class="form-control-file" id="imageInput" aria-describedby="fileHelp">
+                            </div>
+                            <div class="form-group">
+                                <label for="emailInput">Email Address</label>
+                                <input type="email" class="form-control" id="emailInput" placeholder="Enter Your Email Address">
+                                <small id="emailHelp" class="form-text text-muted">We'll only share your Email with a friend you get matched up with.</small>
                             </div>
                             <!--Need to loop over questions to get them to display-->
                             <div class="question-form">
                             </div>
 
-                            <button type="submit" class="btn btn-primary submit">Submit</button>
+                            <button type="submit" class="btn btn-primary submit" data-toggle="modal" data-target="#exampleModalCenter">Submit</button>
                         </form>
                     </div>
                 </div>
@@ -73,11 +99,11 @@
 </html>
 
 <script type="text/javascript">
-    var questions = ["I am always perpared and follow a schedule", "I do not have a active imagination",
+    var questions = ["I am always prepared and follow a schedule", "I do not have a active imagination",
         "I feel comfortable talking to large crowds and meeting new people",
         "I am interested in helping people's problems", "I get irritated and stressed easily",
         "I enjoy using difficult words", "I never leave my belongs laying around",
-        "I like drawing attention to myself", "I make people feel at ease",
+        "I like drawing attention to myself", "I make other people feel at ease",
         "I am much more anxious than most people"
     ];
 
@@ -97,6 +123,97 @@
         $(".question-form").append(questionForm);
     }
 
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+    }
+
+    function matchFriends(newFriend, randFriend, pers) {
+        // console.log(newFriend);
+        // console.log(randFriend);
+        $("#friend_name").text(randFriend.friendName);
+        $("#friend_image").attr("src", randFriend.friendImage);
+        switch (pers) {
+            case "a":
+                $("#description").text("You've been matched with " + randFriend.friendName +
+                    " because you both are extremely introverted and have a very laid back personalty")
+                break;
+            case "b":
+                $("#description").text("You've been matched with " + randFriend.friendName +
+                    " because you both are fairly invtroverted and have high emotional control")
+                break;
+            case "c":
+                $("#description").text("You've been matched with " + randFriend.friendName +
+                    " because you both are fairly outgoing and both of you value organization in your life")
+                break;
+            case "d":
+                $("#description").text("You've been matched with " + randFriend.friendName +
+                    " because you both are extremely outgoing and you both have people oriented personalities")
+                break;
+        }
+        $("#emailDisplay").text("Shoot " + randFriend.friendName + " an email at: " + randFriend.email + " and say hello!")
+    }
+
+
+    function runFriendsQuery() {
+
+        // Here we get the location of the root page.
+        // We use this instead of explicitly saying the URL is localhost:3001 because the url will change when we deploy.
+        var currentURL = window.location.origin;
+
+        // The AJAX function uses the URL of our API to GET the data associated with it (initially set to localhost)
+        $.ajax({
+                url: currentURL + "/api/friends",
+                method: "GET"
+            })
+            .then(function (friendsData) {
+                var friends = [];
+                var persA = [];
+                var persB = [];
+                var persC = [];
+                var persD = [];
+
+                friendsData.forEach(function (friend) {
+                    // console.log(friend);
+                    var totScore = parseInt(friend.totScore);
+                    // console.log(totScore);
+                    friends.push(friends);
+                    if (totScore < 21) {
+                        persA.push(friend);
+                    } else if (totScore < 31) {
+                        persB.push(friend);
+                    } else if (totScore < 41) {
+                        persC.push(friend);
+                    } else if (totScore < 51) {
+                        persD.push(friend);
+                    }
+                });
+
+                // console.log(persA);
+                // console.log(persB);
+                // console.log(persC);
+                // console.log(persD);
+                var newest = friendsData.length - 1;
+
+                if (parseInt(friendsData[newest].totScore) < 21) {
+                    var randFriend = getRandomInt(persA.length - 1);
+                    matchFriends(friendsData[newest], persA[randFriend], "a");
+
+                } else if (parseInt(friendsData[newest].totScore) < 31) {
+                    var randFriend = getRandomInt(persB.length - 1);
+                    matchFriends(friendsData[newest], persB[randFriend], "b");
+
+                } else if (parseInt(friendsData[newest].totScore) < 41) {
+                    var randFriend = getRandomInt(persC.length - 1);
+                    matchFriends(friendsData[newest], persC[randFriend], "c");
+
+                } else if (parseInt(friendsData[newest].totScore) < 51) {
+                    var randFriend = getRandomInt(persD.length - 1);
+                    matchFriends(friendsData[newest], persD[randFriend], "d");
+
+                }
+                // console.log(friendsData[newest]);
+            });
+    }
 
 
     $(".submit").on("click", function (event) {
@@ -105,19 +222,31 @@
         var newFriend = {
             friendName: $("#friendName").val().trim(),
             friendImage: $("#imageInput").val().trim(),
-            scores: [$("#questionAnswer0").val(), 
-                    $("#questionAnswer1").val(),
-                    $("#questionAnswer2").val(),
-                    $("#questionAnswer3").val(),
-                    $("#questionAnswer4").val(),
-                    $("#questionAnswer5").val(),
-                    $("#questionAnswer6").val(),
-                    $("#questionAnswer7").val(),
-                    $("#questionAnswer8").val(),
-                    $("#questionAnswer9").val()]
+            scores: [$("#questionAnswer0").val(),
+                $("#questionAnswer1").val(),
+                $("#questionAnswer2").val(),
+                $("#questionAnswer3").val(),
+                $("#questionAnswer4").val(),
+                $("#questionAnswer5").val(),
+                $("#questionAnswer6").val(),
+                $("#questionAnswer7").val(),
+                $("#questionAnswer8").val(),
+                $("#questionAnswer9").val()
+            ],
+            totScore: (parseInt($("#questionAnswer9").val()) +
+                parseInt($("#questionAnswer0").val()) +
+                parseInt($("#questionAnswer1").val()) +
+                parseInt($("#questionAnswer2").val()) +
+                parseInt($("#questionAnswer3").val()) +
+                parseInt($("#questionAnswer4").val()) +
+                parseInt($("#questionAnswer5").val()) +
+                parseInt($("#questionAnswer6").val()) +
+                parseInt($("#questionAnswer7").val()) +
+                parseInt($("#questionAnswer8").val())),
+            email: $("#emailInput").val().trim()
         };
 
-        console.log(newFriend);
+        //console.log(newFriend);
 
         $.post("/api/friends", newFriend,
             function (data) {
@@ -132,6 +261,6 @@
                 // $("#imageInput").val("");
                 // $("#questionAnswer1").val("");
             });
-
+        runFriendsQuery();
     });
 </script>
